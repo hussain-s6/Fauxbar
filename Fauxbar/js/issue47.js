@@ -5,7 +5,7 @@ function reinit() {
 	localStorage.issue47 = 1;
 	chrome.runtime.sendMessage(null, {action:"reindex"});
 	setTimeout(function(){
-		chrome.tabs.create({selected:true, url:chrome.extension.getURL("html/fauxbar.html")}, function(){
+		chrome.tabs.create({selected:true, url:chrome.runtime.getURL("html/fauxbar.html")}, function(){
 			chrome.tabs.getCurrent(function(tab){
 				chrome.tabs.remove(tab.id);
 			});

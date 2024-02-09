@@ -1,21 +1,25 @@
 // This is the new main background/event page, in an effort to get rid of Fauxbar Memory Helper. (issue #2)
 
 // Record if this is Fauxbar or Fauxbar Lite
-localStorage.extensionName = chrome.runtime.getManifest().name;
+// localStorage.extensionName = chrome.runtime.getManifest().name;
+
+chrome.storage.local.set({ extensionName: chrome.runtime.getManifest().name }, function () {
+	console.log('The extension name has been saved.');
+});
 
 // Disable Fauxbar or Fauxbar Lite (shouldn't have both enabled simultaneously)
 chrome.management.getAll(function(extensions){
-	for (var e in extensions) {
-		if (localStorage.extensionName == "Fauxbar Lite") {
-			if (extensions[e].name == "Fauxbar" && extensions[e].enabled) {
-				chrome.management.setEnabled(extensions[e].id, false);
-			}
-		} else {
-			if (extensions[e].name == "Fauxbar Lite" && extensions[e].enabled) {
-				chrome.management.setEnabled(extensions[e].id, false);
-			}
-		}
-	}
+	// for (var e in extensions) {
+	// 	if (localStorage.extensionName == "Fauxbar Lite") {
+	// 		if (extensions[e].name == "Fauxbar" && extensions[e].enabled) {
+	// 			chrome.management.setEnabled(extensions[e].id, false);
+	// 		}
+	// 	} else {
+	// 		if (extensions[e].name == "Fauxbar Lite" && extensions[e].enabled) {
+	// 			chrome.management.setEnabled(extensions[e].id, false);
+	// 		}
+	// 	}
+	// }
 });
 
 // Record if we should restart the Helper next time it's disabled
@@ -29,6 +33,7 @@ chrome.management.onDisabled.addListener(function(extension) {
 		}, 100);
 	}
 });
+
 // Reload Fauxbar Memory Helper if it's running
 chrome.management.getAll(function(extensions){
 	for (var e in extensions) {
@@ -41,41 +46,49 @@ chrome.management.getAll(function(extensions){
 		}
 	}
 });
+
 // If Helper detects computer is idle, Fauxbar will report back to restart Fauxbar IF no Fauxbar tabs are open.
-chrome.extension.onRequestExternal.addListener(function(request){
-	if (request == "restart fauxbar?" && localStorage.indexComplete == 1) {
-		console.log("Memory Helper would like to restart Fauxbar.");
-		chrome.windows.getAll({populate:true}, function(windows){
-			var okayToRestart = true;
-			for (var w in windows) {
-				for (var t in windows[w].tabs) {
-					// Don't reload Fauxbar if a Fauxbar tab is open
-					if (strstr(windows[w].tabs[t].title, "Fauxbar")) {
-						okayToRestart = false;
-					}
-				}
-			}
-			if (okayToRestart) {
-				chrome.management.getAll(function(extensions){
-					for (var e in extensions) {
-						if (extensions[e].name == "Fauxbar Memory Helper" && extensions[e].enabled) {
-							chrome.extension.sendRequest(extensions[e].id, "restart fauxbar");
-						}
-					}
-				});
-			}
-		});
-	}
-});
+// chrome.extension.onRequestExternal.addListener(function(request){
+// 	if (request == "restart fauxbar?" && localStorage.indexComplete == 1) {
+// 		console.log("Memory Helper would like to restart Fauxbar.");
+// 		chrome.windows.getAll({populate:true}, function(windows){
+// 			var okayToRestart = true;
+// 			for (var w in windows) {
+// 				for (var t in windows[w].tabs) {
+// 					// Don't reload Fauxbar if a Fauxbar tab is open
+// 					if (strstr(windows[w].tabs[t].title, "Fauxbar")) {
+// 						okayToRestart = false;
+// 					}
+// 				}
+// 			}
+// 			if (okayToRestart) {
+// 				chrome.management.getAll(function(extensions){
+// 					for (var e in extensions) {
+// 						if (extensions[e].name == "Fauxbar Memory Helper" && extensions[e].enabled) {
+// 							chrome.extension.sendRequest(extensions[e].id, "restart fauxbar");
+// 						}
+// 					}
+// 				});
+// 			}
+// 		});
+// 	}
+// });
 
 // Open a Fauxbar tab if the indexing needs to be done
-if (localStorage.indexComplete != 1) {
-	chrome.tabs.create({selected:true, url:chrome.extension.getURL("html/fauxbar.html")}, function(){
+if (false) {
+	chrome.tabs.create({ selected: true, url: chrome.runtime.getURL("html/fauxbar.html") }, function () {
 		// User probably disabled/re-enabled Fauxbar during an indexing session, so start indexing again
-		if (localStorage.indexedbefore == 1 && !localStorage.reindexForMaintenance) {
+		//if (localStorage.indexedbefore == 1 && !localStorage.reindexForMaintenance) {
 			index();
-		}
+		//}
 	});
+// if (localStorage.indexComplete != 1) {
+// 	chrome.tabs.create({selected:true, url:chrome.runtime.getURL("html/fauxbar.html")}, function(){
+// 		// User probably disabled/re-enabled Fauxbar during an indexing session, so start indexing again
+// 		if (localStorage.indexedbefore == 1 && !localStorage.reindexForMaintenance) {
+// 			index();
+// 		}
+// 	});
 // Otherwise update top 50 sites with fresh frecency scores if top scores are older than 2 hours
 } /*else if (!localStorage.lastTopUrlRefresh || getMs() - localStorage.lastTopUrlRefresh > 7200000) {
 	updateTopSites();
@@ -96,27 +109,27 @@ chrome.commands.onCommand.addListener(function(command){
 		switch (command) {
 			case 'addressBoxCurrentTab':
 				if (activeTab != null) {
-					if (substr_count(activeTab.url, chrome.extension.getURL("/html/fauxbar.html")) > 0) {
+					if (substr_count(activeTab.url, chrome.runtime.getURL("/html/fauxbar.html")) > 0) {
 						chrome.tabs.sendMessage(activeTab.id, 'Focus Address Box');
 					} else {
-						chrome.tabs.update(activeTab.id, { url:chrome.extension.getURL("/html/fauxbar.html#sel=ai&ai="+window.urlencode(activeTab.url)) });
+						chrome.tabs.update(activeTab.id, { url:chrome.runtime.getURL("/html/fauxbar.html#sel=ai&ai="+window.urlencode(activeTab.url)) });
 					}
 				}
 				break;
 			case 'addressBoxNewTab':
-				chrome.tabs.create({ windowId:topWindow.id, url:chrome.extension.getURL("/html/fauxbar.html#sel=ai") });
+				chrome.tabs.create({ windowId:topWindow.id, url:chrome.runtime.getURL("/html/fauxbar.html#sel=ai") });
 				break;
 			case 'searchBoxCurrentTab':
 				if (activeTab != null) {
-					if (substr_count(activeTab.url, chrome.extension.getURL("/html/fauxbar.html")) > 0) {
+					if (substr_count(activeTab.url, chrome.runtime.getURL("/html/fauxbar.html")) > 0) {
 						chrome.tabs.sendMessage(activeTab.id, 'Focus Search Box');
 					} else {
-						chrome.tabs.update(activeTab.id, { url:chrome.extension.getURL("/html/fauxbar.html#sel=os") });
+						chrome.tabs.update(activeTab.id, { url:chrome.runtime.getURL("/html/fauxbar.html#sel=os") });
 					}
 				}
 				break;
 			case 'searchBoxNewTab':
-				chrome.tabs.create({ windowId:topWindow.id, url:chrome.extension.getURL("/html/fauxbar.html#sel=os") });
+				chrome.tabs.create({ windowId:topWindow.id, url:chrome.runtime.getURL("/html/fauxbar.html#sel=os") });
 				break;
 		}
 	});
@@ -172,8 +185,8 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest){
 							modifiers += ' AND type = 2 ';
 						}
 						else {
-							urltitleWords[urltitleWords.length] = '%'+str_replace("_","¸_",str_replace("%","¸%",words[w]))+'%';
-							urltitleQMarks2[urltitleQMarks2.length] = ' urltitletag LIKE ? ESCAPE "¸" ';
+							urltitleWords[urltitleWords.length] = '%'+str_replace("_","ï¿½_",str_replace("%","ï¿½%",words[w]))+'%';
+							urltitleQMarks2[urltitleQMarks2.length] = ' urltitletag LIKE ? ESCAPE "ï¿½" ';
 						}
 					}
 				}
@@ -270,7 +283,7 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest){
 					var urlExplode = "";
 
 					// Replace any cedillas with a space - it's a special character. Sorry to anyone that actually uses it!
-					text = str_replace("¸", " ", text);
+					text = str_replace("ï¿½", " ", text);
 
 					var matchOpen = '<match>';
 					var matchClose = '</match>';
@@ -278,7 +291,7 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest){
 						matchOpen = matchClose = '';
 					}
 
-					// Replace special characters with funky ¸%%%%%%¸ symbols
+					// Replace special characters with funky ï¿½%%%%%%ï¿½ symbols
 					text = replaceSpecialChars(text);
 					var truncated = 0;
 
@@ -351,7 +364,7 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest){
 
 								tagText = hI.tag;
 
-								// Replace special characters with funky ¸%%%%%%¸ symbols
+								// Replace special characters with funky ï¿½%%%%%%ï¿½ symbols
 								titleText = replaceSpecialChars(titleText);
 								urlText = replaceSpecialChars(urlText);
 								tagText = replaceSpecialChars(tagText);
@@ -360,9 +373,9 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest){
 								for (var i in words) {
 									if (words[i] != "") {
 										regEx = new RegExp(words[i], 'gi');
-										titleText = titleText.replace(regEx, '¸%%%%%¸$&¸%%%%¸');
-										urlText = urlText.replace(regEx, '¸%%%%%¸$&¸%%%%¸');
-										tagText = tagText.replace(regEx, '¸%%%%%¸$&¸%%%%¸');
+										titleText = titleText.replace(regEx, 'ï¿½%%%%%ï¿½$&ï¿½%%%%ï¿½');
+										urlText = urlText.replace(regEx, 'ï¿½%%%%%ï¿½$&ï¿½%%%%ï¿½');
+										tagText = tagText.replace(regEx, 'ï¿½%%%%%ï¿½$&ï¿½%%%%ï¿½');
 									}
 								}
 
@@ -372,12 +385,12 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest){
 								tagText = replacePercents(tagText);
 
 								// Replace <match> and </match> with symbols
-								titleText = str_replace("¸%%%%%¸", matchOpen, titleText);
-								titleText = str_replace("¸%%%%¸", matchClose, titleText);
-								urlText = str_replace("¸%%%%%¸", matchOpen, urlText);
-								urlText = str_replace("¸%%%%¸", matchClose, urlText);
-								tagText = str_replace("¸%%%%%¸", matchOpen, tagText);
-								tagText = str_replace("¸%%%%¸", matchClose, tagText);
+								titleText = str_replace("ï¿½%%%%%ï¿½", matchOpen, titleText);
+								titleText = str_replace("ï¿½%%%%ï¿½", matchClose, titleText);
+								urlText = str_replace("ï¿½%%%%%ï¿½", matchOpen, urlText);
+								urlText = str_replace("ï¿½%%%%ï¿½", matchClose, urlText);
+								tagText = str_replace("ï¿½%%%%%ï¿½", matchOpen, tagText);
+								tagText = str_replace("ï¿½%%%%ï¿½", matchClose, tagText);
 
 								// Replace &
 								titleText = str_replace('&', '&amp;', titleText);
@@ -385,12 +398,12 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest){
 								tagText = str_replace('&', '&amp;', tagText);
 
 								// Replace symbols back to <match> and </match>
-								titleText = str_replace(matchOpen, "¸%%%%%¸", titleText);
-								titleText = str_replace(matchClose, "¸%%%%¸", titleText);
-								urlText = str_replace(matchOpen, "¸%%%%%¸", urlText);
-								urlText = str_replace(matchClose, "¸%%%%¸", urlText);
-								tagText = str_replace(matchOpen, "¸%%%%%¸", tagText);
-								tagText = str_replace(matchClose, "¸%%%%¸", tagText);
+								titleText = str_replace(matchOpen, "ï¿½%%%%%ï¿½", titleText);
+								titleText = str_replace(matchClose, "ï¿½%%%%ï¿½", titleText);
+								urlText = str_replace(matchOpen, "ï¿½%%%%%ï¿½", urlText);
+								urlText = str_replace(matchClose, "ï¿½%%%%ï¿½", urlText);
+								tagText = str_replace(matchOpen, "ï¿½%%%%%ï¿½", tagText);
+								tagText = str_replace(matchClose, "ï¿½%%%%ï¿½", tagText);
 
 								// Replace opening and closing tags
 								titleText = str_replace(">", "&gt;", titleText);
@@ -402,12 +415,12 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest){
 								tagText = str_replace(">", "&gt;", tagText);
 								tagText = str_replace("<", "&lt;", tagText);
 
-								titleText = str_replace("¸%%%%%¸", matchOpen, titleText);
-								titleText = str_replace("¸%%%%¸", matchClose, titleText);
-								urlText = str_replace("¸%%%%%¸", matchOpen, urlText);
-								urlText = str_replace("¸%%%%¸", matchClose, urlText);
-								tagText = str_replace("¸%%%%%¸", matchOpen, tagText);
-								tagText = str_replace("¸%%%%¸", matchClose, tagText);
+								titleText = str_replace("ï¿½%%%%%ï¿½", matchOpen, titleText);
+								titleText = str_replace("ï¿½%%%%ï¿½", matchClose, titleText);
+								urlText = str_replace("ï¿½%%%%%ï¿½", matchOpen, urlText);
+								urlText = str_replace("ï¿½%%%%ï¿½", matchClose, urlText);
+								tagText = str_replace("ï¿½%%%%%ï¿½", matchOpen, tagText);
+								tagText = str_replace("ï¿½%%%%ï¿½", matchClose, tagText);
 
 								// Make URLs say "Switch to tab" if tab is open
 								if (localStorage.option_switchToTab != "disable") {
@@ -491,7 +504,7 @@ chrome.omnibox.onInputEntered.addListener(function(text){
 
 	var url = text.trim();
 	if (url.length == 0) {
-		url = chrome.extension.getURL("/html/fauxbar.html");
+		url = chrome.runtime.getURL("/html/fauxbar.html");
 	}
 	
 	// Auto Assist first result check
@@ -698,7 +711,7 @@ chrome.tabs.onAttached.addListener(function() {
 chrome.history.onVisited.addListener(function(historyItem) {
 
 	// If the visit is to Fauxbar's page, remove it from Chrome's history. Don't need to litter the user's history with every instance that Fauxbar is opened when they open a new tab.
-	if (strstr(historyItem.url, chrome.extension.getURL(""))) {
+	if (strstr(historyItem.url, chrome.runtime.getURL(""))) {
 		chrome.history.deleteUrl({url:historyItem.url});
 	}
 
@@ -942,7 +955,7 @@ chrome.management.onInstalled.addListener(function(app) {
 // Check to see if database has become corrupted (issue #47) and display an error page if so
 setTimeout(function(){
 	if (localStorage.issue47 == 1) {
-		chrome.tabs.create({url:chrome.extension.getURL("/html/issue47.html"), selected:true});
+		chrome.tabs.create({url:chrome.runtime.getURL("/html/issue47.html"), selected:true});
 		return;
 	}
 	if (localStorage.indexedbefore == 1 && openDb()) {
@@ -951,7 +964,7 @@ setTimeout(function(){
 				// There should always be at least one search engine, so if there's none, DB is corrupt
 				if (!engines.rows.length) {
 					localStorage.issue47 = 1;
-					chrome.tabs.create({url:chrome.extension.getURL("/html/issue47.html"), selected:true});
+					chrome.tabs.create({url:chrome.runtime.getURL("/html/issue47.html"), selected:true});
 					return true;
 				}
 				tx.executeSql('SELECT * FROM urls LIMIT 1', [], function(tx, urls){
@@ -971,7 +984,7 @@ setTimeout(function(){
 		}, function(){
 			// If one of the tables above doesn't exist, DB is corrupt
 			localStorage.issue47 = 1;
-			chrome.tabs.create({url:chrome.extension.getURL("/html/issue47.html"), selected:true});
+			chrome.tabs.create({url:chrome.runtime.getURL("/html/issue47.html"), selected:true});
 		}, function(){
 			// But if DB seems fine, backup keywords and search engines to local storage
 			if (localStorage.issue47 != 1) {
@@ -989,12 +1002,12 @@ setTimeout(function(){
 chrome.browserAction.onClicked.addListener(function(tab) {
 	if (localStorage.option_launchFauxbar == "currentTab") {
 		chrome.tabs.getSelected(null, function(tab){
-			chrome.tabs.update(tab.id, {url:chrome.extension.getURL("html/fauxbar.html")});
+			chrome.tabs.update(tab.id, {url:chrome.runtime.getURL("html/fauxbar.html")});
 		});
 	} else if (localStorage.option_launchFauxbar == "newTab") {
-		chrome.tabs.create({url:chrome.extension.getURL("/html/fauxbar.html"), selected:true});
+		chrome.tabs.create({url:chrome.runtime.getURL("/html/fauxbar.html"), selected:true});
 	} else if (localStorage.option_launchFauxbar == "newWindow") {
-		chrome.windows.create({url:chrome.extension.getURL("html/fauxbar.html")});
+		chrome.windows.create({url:chrome.runtime.getURL("html/fauxbar.html")});
 	}
 });
 
@@ -1038,7 +1051,7 @@ chrome.runtime.onMessage.addListener(function(request, sender){
 		window.newSearchEngineInfo = request.engine;
 		chrome.windows.create({
 			type: "popup",
-			url: chrome.extension.getURL("html/addSearchEngine.html"),
+			url: chrome.runtime.getURL("html/addSearchEngine.html"),
 			width: 425,
 			height: 1,
 			top: -1000
@@ -1376,7 +1389,7 @@ chrome.runtime.onInstalled.addListener(function(details){
 						}, null, function(){
 							localStorage.indexComplete = 0;
 							localStorage.needToReindex = 1;
-							chrome.tabs.create({selected:true, url:chrome.extension.getURL("html/fauxbar.html")});
+							chrome.tabs.create({selected:true, url:chrome.runtime.getURL("html/fauxbar.html")});
 						});
 
 						// Add `inputurls` table, added in 0.5.4

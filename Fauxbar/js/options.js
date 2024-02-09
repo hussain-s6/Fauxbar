@@ -352,12 +352,12 @@ function getSearchEngines() {
 function editSiteTiles() {
 	chrome.tabs.getAllInWindow(null, function(tabs){
 		for (var t in tabs) {
-			if (tabs[t].title == "Fauxbar: Edit Tiles" && (strstr(tabs[t].url, chrome.extension.getURL("/html/fauxbar.html")) || strstr(tabs[t].url, "chrome://newtab"))) {
+			if (tabs[t].title == "Fauxbar: Edit Tiles" && (strstr(tabs[t].url, chrome.runtime.getURL("/html/fauxbar.html")) || strstr(tabs[t].url, "chrome://newtab"))) {
 				chrome.tabs.update(tabs[t].id, {selected:true});
 				return;
 			}
 		}
-		chrome.tabs.create({url:chrome.extension.getURL("/html/fauxbar.html#edittiles=1")});
+		chrome.tabs.create({url:chrome.runtime.getURL("/html/fauxbar.html#edittiles=1")});
 	});
 }
 
@@ -597,7 +597,7 @@ $("#bgFile").live("change",function(e){
 						fileWriter.write(dataURItoBlob(e.target.result));
 						$("#option_bgimg").val("").change();
 						setTimeout(function(){
-							$("#option_bgimg").val('filesystem:'+chrome.extension.getURL("persistent/background.image")).change();
+							$("#option_bgimg").val('filesystem:'+chrome.runtime.getURL("persistent/background.image")).change();
 						},1);
 						window.location.reload();
 					}, fileErrorHandler);
@@ -636,7 +636,7 @@ function rebuildDatabase() {
 	localStorage.issue47 = 1;
 	chrome.runtime.sendMessage(null, {action:"reindex"});
 	setTimeout(function(){
-		chrome.tabs.create({selected:true, url:chrome.extension.getURL("html/fauxbar.html")}, function(){
+		chrome.tabs.create({selected:true, url:chrome.runtime.getURL("html/fauxbar.html")}, function(){
 			chrome.tabs.getCurrent(function(tab){
 				chrome.tabs.remove(tab.id);
 			});

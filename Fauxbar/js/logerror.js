@@ -209,7 +209,7 @@ function getLineInfo() {
 	console.log(new Error().stack);
 	var lines = new Error().stack.split("\n");
 	var line = lines[lines.length-1];
-	var file = line.split(chrome.extension.getURL(""), 2);
+	var file = line.split(chrome.runtime.getURL(""), 2);
 	file = file[1];
 	var bits = file.split(":");
 	return {file:bits[0], line:bits[1], col:bits[2]};
@@ -230,7 +230,7 @@ function logError(msg, file, line) {
 		&& msg != 'Uncaught ReferenceError: downloadUpdated is not defined'
 		&& msg != "Uncaught TypeError: Cannot set property 'handlers' of undefined"
 		&& msg != "Uncaught TypeError: Cannot call method 'ensureListenerSetup' of undefined") {
-		var base = chrome.extension.getURL("");
+		var base = chrome.runtime.getURL("");
 		if (file.substring(0, base.length) == base) {
 			file = file.substring(base.length);
 		}
@@ -286,7 +286,7 @@ function logError(msg, file, line) {
 			}
 		} else {
 			console.log('Unable to open Fauxbar\'s database.');
-			webkitNotifications.createNotification(chrome.extension.getURL('/img/fauxbar48sad.png'), 'Unable to open Fauxbar\'s database.', 'Please try disabling and re-enabling Fauxbar to resolve this.\n\nAdditionally, Fauxbar\'s error log and/or background console may contain useful information to report.').show();
+			webkitNotifications.createNotification(chrome.runtime.getURL('/img/fauxbar48sad.png'), 'Unable to open Fauxbar\'s database.', 'Please try disabling and re-enabling Fauxbar to resolve this.\n\nAdditionally, Fauxbar\'s error log and/or background console may contain useful information to report.').show();
 		}
 	}
 }

@@ -865,7 +865,7 @@ chrome.bookmarks.onMoved.addListener(refreshBookmarkMenu);
 chrome.bookmarks.onRemoved.addListener(refreshBookmarkMenu);
 
 function refreshFauxbarMenu() {
-	var options = window.location.href != chrome.extension.getURL("/html/fauxbar.html#options=1") ?
+	var options = window.location.href != chrome.runtime.getURL("/html/fauxbar.html#options=1") ?
 		'<item style="background-image:url(/img/wrench.png)" '+(localStorage.indexComplete==1?'':'faded')+'><a '+(localStorage.indexComplete==1?'options':'')+'>Options</a></item>' : '';
 	$('menu[fauxbar]').html('<menuName>'+localStorage.extensionName+'</menuName><items><group>' +
 		options +
@@ -884,7 +884,7 @@ function refreshFauxbarMenu() {
 }
 
 $('a[options]').live('mousedown', function(){
-	window.location = chrome.extension.getURL("/html/fauxbar.html#options=1");
+	window.location = chrome.runtime.getURL("/html/fauxbar.html#options=1");
 	window.location.reload();
 	return false;
 });

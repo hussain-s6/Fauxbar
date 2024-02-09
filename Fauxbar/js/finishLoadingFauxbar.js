@@ -20,7 +20,7 @@ try {
 }
 catch (e) {
 	if (window.location.href.split('#reloaded=1').length == 1 && window.location.href.split('&reloaded=1').length == 1) {
-		if (window.location.href == chrome.extension.getURL('/html/fauxbar.html')) {
+		if (window.location.href == chrome.runtime.getURL('/html/fauxbar.html')) {
 			window.location.href += '#reloaded=1';
 		} else {
 			window.location.href += '&reloaded=1';

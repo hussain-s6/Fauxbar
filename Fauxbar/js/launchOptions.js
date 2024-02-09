@@ -20,7 +20,7 @@ function strstr (haystack, needle, bool) {
 setTimeout(function(){
 	chrome.tabs.getAllInWindow(null, function(tabs){
 		var found = false;
-		var fb = chrome.extension.getURL("/html/fauxbar.html");
+		var fb = chrome.runtime.getURL("/html/fauxbar.html");
 		for (var t in tabs) {
 			if ((tabs[t].title == "Fauxbar: Options" || tabs[t].title == "Fauxbar Lite: Options") && strstr(tabs[t].url, fb+'#')) {
 				found = true;
@@ -34,7 +34,7 @@ setTimeout(function(){
 			for (var tt in tabs) {
 				if (tabs[tt].title == "Fauxbar" && (strstr(tabs[tt].url, fb) || strstr(tabs[tt].url, "chrome://newtab"))) {
 					found = true;
-					chrome.tabs.update(tabs[tt].id, {selected:true, url:chrome.extension.getURL("/html/fauxbar.html#options=1")}, function(tab){
+					chrome.tabs.update(tabs[tt].id, {selected:true, url:chrome.runtime.getURL("/html/fauxbar.html#options=1")}, function(tab){
 						chrome.runtime.sendMessage(null, {action:"openOptions", tabId:tab.id});
 					});
 					chrome.tabs.getCurrent(function(tab){
@@ -44,7 +44,7 @@ setTimeout(function(){
 			}
 			if (!found) {
 				chrome.tabs.getCurrent(function(tab){
-					chrome.tabs.create({url:chrome.extension.getURL("/html/fauxbar.html#options=1"), selected:true, index:tab.index+1});
+					chrome.tabs.create({url:chrome.runtime.getURL("/html/fauxbar.html#options=1"), selected:true, index:tab.index+1});
 					chrome.tabs.remove(tab.id);
 				});
 			}

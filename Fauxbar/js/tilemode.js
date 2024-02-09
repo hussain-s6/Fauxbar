@@ -32,7 +32,7 @@ function saveSiteTiles(justChecking) {
 					window.close();
 				} else {
 					chrome.tabs.getCurrent(function(tab){
-						chrome.tabs.update(tab.id, {url:chrome.extension.getURL("/html/fauxbar.html")});
+						chrome.tabs.update(tab.id, {url:chrome.runtime.getURL("/html/fauxbar.html")});
 					});
 				}
 			});
@@ -48,7 +48,7 @@ function cancelTiles() {
 		window.close();
 	} else {
 		chrome.tabs.getCurrent(function(tab){
-			chrome.tabs.update(tab.id, {url:chrome.extension.getURL("/html/fauxbar.html")});
+			chrome.tabs.update(tab.id, {url:chrome.runtime.getURL("/html/fauxbar.html")});
 		});
 	}
 }

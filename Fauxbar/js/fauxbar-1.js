@@ -7,7 +7,7 @@ if (localStorage.issue47 == 1) {
 		var tabId = false;
 		chrome.tabs.getAllInWindow(null, function(tabs){
 			for (var t in tabs) {
-				if (tabs[t].url == chrome.extension.getURL("/html/issue47.html")) {
+				if (tabs[t].url == chrome.runtime.getURL("/html/issue47.html")) {
 					tabId = tabs[t].id;
 					break;
 				}
@@ -19,7 +19,7 @@ if (localStorage.issue47 == 1) {
 					});
 				});
 			} else {
-				window.location = chrome.extension.getURL("/html/issue47.html");
+				window.location = chrome.runtime.getURL("/html/issue47.html");
 			}
 		});
 	}
@@ -1157,7 +1157,7 @@ $("#contextMenu .menuOption").live("mousedown", function(){
 				if (window.tileEditMode) {
 					localStorage.option_optionpage = "option_section_tiles";
 				}
-				window.location = chrome.extension.getURL("/html/fauxbar.html#options=1");
+				window.location = chrome.runtime.getURL("/html/fauxbar.html#options=1");
 				window.location.reload();
 				break;
 
@@ -1166,7 +1166,7 @@ $("#contextMenu .menuOption").live("mousedown", function(){
 					enterTileEditMode();
 				} else {
 					localStorage.option_optionpage = "option_section_tiles";
-					window.location = chrome.extension.getURL("/html/fauxbar.html#options=1");
+					window.location = chrome.runtime.getURL("/html/fauxbar.html#options=1");
 					window.location.reload();
 				}
 				break;
@@ -2948,7 +2948,7 @@ function getResults(noQuery) {
 											resultHtml += '<span class="resultTag" style="white-space:nowrap; position:absolute; display:block; font-size:'+localStorage.option_urlsize+'px; text-decoration:none">'+tagText+'</span>';
 										}
 
-										var faviconSrc = hI.isBookmarkFolder ? chrome.extension.getURL("img/folder_closed.png") : 'chrome://favicon/'+hI.url;
+										var faviconSrc = hI.isBookmarkFolder ? chrome.runtime.getURL("img/folder_closed.png") : 'chrome://favicon/'+hI.url;
 
 										resultHtml += '	<div class="result_title" url="'+urlWithQuotesReplaced/*hI.url*/+'"><img class="result_favicon" src="'+faviconSrc+'" />'+titleText+'</div><br />';
 										resultHtml += '	<div class="result_url">'+addTileText+urlText+'</div>';

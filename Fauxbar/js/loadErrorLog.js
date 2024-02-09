@@ -9,7 +9,7 @@ function showErrors() {
 				if (len > 0) {
 					for (i = 0; i < len; i++) {
 						row = results.rows.item(i);
-						url = str_replace(chrome.extension.getURL(""), "", row.url);
+						url = str_replace(chrome.runtime.getURL(""), "", row.url);
 						class1 = class1 == "odd" ? "even" : "odd";
 						$("tr").last().after('<tr class="'+class1+'"><td style="text-align:right">'+(i+1)+'.</td><td>'+row.date+'</td><td>'+row.version+'</td><td>'+url+'</td><td>'+row.file+'</td><td>'+row.line+'</td><td>'+row.message+'</td><td style="text-align:right">'+row.count+'</td></tr>');
 						if (!strstr((i+1)/20, ".")) {
