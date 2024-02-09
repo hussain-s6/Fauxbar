@@ -14,6 +14,8 @@ _An alternative to Chrome's Omnibox._
 
 Latest version: 1.8.1 (14 June 2019). [View changelog](https://github.com/ChrisNZL/Fauxbar/wiki/Changelog)
 
+Version 2.0.0 is the attempt at getting this working with Manifest v3 and working without needing WebSQL for the storage engine.
+
 ---
 
 ### What is Fauxbar?
