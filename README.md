@@ -1,6 +1,4 @@
-# Fauxbar
-
-![Fauxbar logo](https://raw.githubusercontent.com/ChrisNZL/Fauxbar/master/Fauxbar/img/fauxbar128.png)
+# Fauxbar v2 - Manifest v3 & Storage Migration
 
 _An alternative to Chrome's Omnibox._
 
@@ -8,13 +6,8 @@ _An alternative to Chrome's Omnibox._
 
 ---
 
-**[Download Fauxbar from the Chrome Web Store](https://chrome.google.com/webstore/detail/fauxbar/hibkhcnpkakjniplpfblaoikiggkopka)**
-
-[Fauxbar Lite](https://chrome.google.com/webstore/detail/bfimmnpbjccjihohjkimphfmmebffbmk) is also available. [What's the difference?](https://github.com/ChrisNZL/Fauxbar/wiki/FAQ#whats-the-difference-between-fauxbar-and-fauxbar-lite)
-
-Latest version: 1.8.1 (14 June 2019). [View changelog](https://github.com/ChrisNZL/Fauxbar/wiki/Changelog)
-
 Version 2.0.0 is the attempt at getting this working with Manifest v3 and working without needing WebSQL for the storage engine.
+Latest version: 1.8.1 (14 June 2019). [View changelog](https://github.com/ChrisNZL/Fauxbar/wiki/Changelog)
 
 ---
 
